@@ -18,12 +18,12 @@ class Network(nn.Module):
     
     def __init__(self, input_size, nb_action):
         super(Network, self).__init__()
-        self.input_size = input_size
-        self.nb_action = nb_action
-        self.fc1 = nn.Linear(input_size, 30)
-        self.fc2 = nn.Linear(30, nb_action)
+        self.input_size = input_size #num of input neurons
+        self.nb_action = nb_action # num of output neurons (possible actions)
+        self.fc1 = nn.Linear(input_size, 30) #connect input neuron layer with hidden layer
+        self.fc2 = nn.Linear(30, nb_action) # connect hidden layer wth output layer (actions)
     
-    def forward(self, state):
+    def forward(self, state): #activate neurons
         x = F.relu(self.fc1(state))
         q_values = self.fc2(x)
         return q_values
@@ -33,10 +33,10 @@ class Network(nn.Module):
 class ReplayMemory(object):
     
     def __init__(self, capacity):
-        self.capacity = capacity
-        self.memory = []
+        self.capacity = capacity #max number of transitions from the past
+        self.memory = [] # contains capacity previous events  
     
-    def push(self, event):
+    def push(self, event):  #store a new event in memory
         self.memory.append(event)
         if len(self.memory) > self.capacity:
             del self.memory[0]
