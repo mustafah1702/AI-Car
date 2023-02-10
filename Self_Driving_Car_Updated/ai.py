@@ -23,7 +23,7 @@ class Network(nn.Module):
         self.fc1 = nn.Linear(input_size, 30) #connect input neuron layer with hidden layer
         self.fc2 = nn.Linear(30, nb_action) # connect hidden layer wth output layer (actions)
     
-    def forward(self, state): #activate neurons
+    def forward(self, state):
         x = F.relu(self.fc1(state))
         q_values = self.fc2(x)
         return q_values
@@ -33,10 +33,10 @@ class Network(nn.Module):
 class ReplayMemory(object):
     
     def __init__(self, capacity):
-        self.capacity = capacity #max number of transitions from the past
-        self.memory = [] # contains capacity previous events  
+        self.capacity = capacity
+        self.memory = []
     
-    def push(self, event):  #store a new event in memory
+    def push(self, event):
         self.memory.append(event)
         if len(self.memory) > self.capacity:
             del self.memory[0]
@@ -60,7 +60,9 @@ class Dqn():
         self.last_reward = 0
     
     def select_action(self, state):
-        probs = F.softmax(self.model(Variable(state, volatile = True))*100) # T=100
+        #probs = F.softmax(self.model(Variable(state, volatile = True))*100) # T=100
+        with torch.no_grad():
+            probs = F.softmax(self.model(Variable(state)), dim=1)*100 # T=100
         action = probs.multinomial(num_samples=1)
         return action.data[0,0]
     
